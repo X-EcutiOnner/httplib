@@ -3,9 +3,16 @@
 
 #include <curl/curl.h>
 
+struct http_cert {
+    char *cert;
+    char *key;
+    char *password;
+};
+
 struct http_opts {
     char *cookies;
     char *proxy;
+    struct http_cert *cert;
 };
 
 struct http_write_buffer {
