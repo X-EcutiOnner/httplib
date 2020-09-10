@@ -51,8 +51,6 @@ struct http_response *http_request(const char *method, const char *url, struct h
     result->curl = curl;
     result->curl_code = curl_easy_perform(curl);
 
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &result->status_code);
-
     return result;
 }
 
