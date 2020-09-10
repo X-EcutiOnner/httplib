@@ -44,6 +44,33 @@ fail:
     return NULL;
 }
 
+void _http_curl_setopts(CURL *curl, struct http_opts *opts) {
+    if(!opts)
+        return;
+
+    curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
+    curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
+    if(opts->cert) {
+        curl_easy_setopt(curl, CURLOPT_SSLCERT, opts->cert->cert);
+        curl_easy_setopt(curl, CURLOPT_SSLKEY, opts->cert->key);
+        curl_easy_setopt(curl, CURLOPT_KEYPASSWD, opts->cert->password);
+    }
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
+    if(opts->auth) {
+        switch(opts->auth->type) {
+        case HTTP_AUTHTYPE_BASIC:
+            curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
+            curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
+            break;
+        case HTTP_AUTHTYPE_BEARER:
+            curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+            curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ((struct http_auth_bearer *)opts->auth)->token);
+            break;
+        }
+    }
+}
+
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts) {
     if(!method)
         return NULL;
@@ -63,31 +90,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
                                                           * Return linked list of http_response structs? (See Python requests API.)
                                                           */
 
-    /* overrides */
-    if(opts) {
-        curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
-        curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
-        if(opts->cert) {
-            curl_easy_setopt(curl, CURLOPT_SSLCERT, opts->cert->cert);
-            curl_easy_setopt(curl, CURLOPT_SSLKEY, opts->cert->key);
-            curl_easy_setopt(curl, CURLOPT_KEYPASSWD, opts->cert->password);
-        }
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
-        if(opts->auth) {
-            switch(opts->auth->type) {
-            case HTTP_AUTHTYPE_BASIC:
-                curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
-                curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
-                break;
-            case HTTP_AUTHTYPE_BEARER:
-                curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
-                curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ((struct http_auth_bearer *)opts->auth)->token);
-                break;
-            }
-        }
-    }
-
+    _http_curl_setopts(curl, opts);
     return _http_curl_perform(curl);
 }
 
