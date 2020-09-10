@@ -4,7 +4,7 @@
 #include <curl/curl.h>
 
 struct http_opts {
-    /* TODO */
+    char *proxy;
 };
 
 struct http_write_buffer {

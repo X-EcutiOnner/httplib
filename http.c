@@ -35,7 +35,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
 
     if(opts) {
-        /* TODO: set more options */
+        curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
     }
 
     result->headers = WRITE_BUFFER_INIT;
