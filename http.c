@@ -71,12 +71,8 @@ void _http_curl_setopts(CURL *curl, struct http_opts *opts) {
 
     curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
     curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
-    if(opts->cert) {
-        curl_easy_setopt(curl, CURLOPT_SSLCERT, opts->cert->cert);
-        curl_easy_setopt(curl, CURLOPT_SSLKEY, opts->cert->key);
-        curl_easy_setopt(curl, CURLOPT_KEYPASSWD, opts->cert->password);
-    }
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
+
     if(opts->auth) {
         switch(opts->auth->type) {
         case HTTP_AUTHTYPE_BASIC:
@@ -87,6 +83,11 @@ void _http_curl_setopts(CURL *curl, struct http_opts *opts) {
         case HTTP_AUTHTYPE_BEARER:
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
             curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ((struct http_auth_bearer *)opts->auth)->token);
+            break;
+        case HTTP_AUTHTYPE_X509:
+            curl_easy_setopt(curl, CURLOPT_SSLCERT, ((struct http_auth_x509 *)opts->auth)->cert);
+            curl_easy_setopt(curl, CURLOPT_SSLKEY, ((struct http_auth_x509 *)opts->auth)->key);
+            curl_easy_setopt(curl, CURLOPT_KEYPASSWD, ((struct http_auth_x509 *)opts->auth)->password);
             break;
         }
     }
