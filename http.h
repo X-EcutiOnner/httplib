@@ -53,19 +53,19 @@ static inline const char *http_response_content(struct http_response *this) {
 }
 
 static inline const char *http_response_url(struct http_response *this) {
-    char *result;
+    char *result = NULL;
     curl_easy_getinfo(this->curl, CURLINFO_EFFECTIVE_URL, &result);
     return result;
 }
 
 static inline int http_response_status_code(struct http_response *this) {
-    int result;
+    int result = 0;
     curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &result);
     return result;
 }
 
 static inline double http_response_elapsed(struct http_response *this) {
-    double result;
+    double result = 0;
     curl_easy_getinfo(this->curl, CURLINFO_TOTAL_TIME, &result);
     return result;
 }
