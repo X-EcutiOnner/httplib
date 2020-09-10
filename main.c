@@ -21,6 +21,12 @@ void response_print(struct http_response *resp) {
     printf("Elapsed Seconds: %f\n", http_response_elapsed(resp));
 }
 
+void basic_usage(void) {
+    struct http_response *resp = http_request("GET", "http://google.com/", NULL);
+    response_print(resp);
+    http_response_free(resp);
+}
+
 void cookies(void) {
     struct http_opts opts = {
         .cookies = "key1=value1;key2=value2",
@@ -54,7 +60,8 @@ void auth_bearer(void) {
 }
 
 int main(void) {
+    basic_usage();
     /* cookies(); */
     /* auth_basic(); */
-    auth_bearer();
+    /* auth_bearer(); */
 }
