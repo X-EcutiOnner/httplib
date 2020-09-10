@@ -20,6 +20,30 @@ static size_t write_callback(void *contents, size_t size, size_t count, void *_b
     return new_size;
 }
 
+
+struct http_response *_http_curl_perform(CURL *curl) {
+    struct http_response *result = malloc(sizeof *result);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
+
+    result->headers = WRITE_BUFFER_INIT;
+    result->content = WRITE_BUFFER_INIT;
+    result->curl = curl;
+
+    CURLcode curl_code = curl_easy_perform(curl);
+    if(curl_code != CURLE_OK)
+        goto fail;
+    return result;
+
+fail:
+    http_curl_error_code = curl_code;
+    curl_easy_cleanup(curl);
+    free(result);
+    return NULL;
+}
+
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts) {
     if(!method)
         return NULL;
@@ -64,26 +88,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
         }
     }
 
-    struct http_response *result = malloc(sizeof *result);
-
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
-
-    result->headers = WRITE_BUFFER_INIT;
-    result->content = WRITE_BUFFER_INIT;
-    result->curl = curl;
-
-    CURLcode curl_code = curl_easy_perform(curl);
-    if(curl_code != CURLE_OK)
-        goto fail;
-    return result;
-
-fail:
-    http_curl_error_code = curl_code;
-    curl_easy_cleanup(curl);
-    free(result);
-    return NULL;
+    return _http_curl_perform(curl);
 }
 
 void http_response_free(struct http_response *this) {
