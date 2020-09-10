@@ -26,7 +26,6 @@ struct http_response {
     CURLcode curl_code;
     struct http_write_buffer headers;
     struct http_write_buffer content;
-    char *url;
     int status_code;
 };
 
@@ -51,6 +50,12 @@ static inline size_t http_response_content_length(struct http_response *this) {
 
 static inline const char *http_response_content(struct http_response *this) {
     return this->content.data;
+}
+
+static inline const char *http_response_url(struct http_response *this) {
+    char *result;
+    curl_easy_getinfo(this->curl, CURLINFO_EFFECTIVE_URL, &result);
+    return result;
 }
 
 #endif
