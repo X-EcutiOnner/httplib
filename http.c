@@ -48,16 +48,17 @@ struct http_response *http_request(const char *method, const char *url, struct h
     result->headers = WRITE_BUFFER_INIT;
     result->content = WRITE_BUFFER_INIT;
 
+    result->curl = curl;
     result->curl_code = curl_easy_perform(curl);
 
     curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &result->url);
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &result->status_code);
 
-    curl_easy_cleanup(curl);
     return result;
 }
 
 void http_response_free(struct http_response *this) {
+    curl_easy_cleanup(this->curl);
     if(this->headers.data)
         free(this->headers.data);
     if(this->content.data)

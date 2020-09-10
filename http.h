@@ -22,6 +22,7 @@ struct http_write_buffer {
 };
 
 struct http_response {
+    CURL *curl;
     CURLcode curl_code;
     struct http_write_buffer headers;
     struct http_write_buffer content;
