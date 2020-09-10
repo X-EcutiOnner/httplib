@@ -97,10 +97,14 @@ struct http_response *http_request(const char *method, const char *url, struct h
         return NULL;
     if(!url)
         return NULL;
+
     CURL *curl = curl_easy_init();
+
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
     curl_easy_setopt(curl, CURLOPT_URL, url);
+
     _http_curl_setopts(curl, opts);
+
     return _http_curl_perform(curl);
 }
 
