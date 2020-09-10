@@ -90,6 +90,12 @@ static inline int http_response_status_code(struct http_response *this) {
     return result;
 }
 
+static inline const char *http_response_redirect_url(struct http_response *this) {
+    char *result = NULL;
+    curl_easy_getinfo(this->curl, CURLINFO_REDIRECT_URL, &result);
+    return result;
+}
+
 static inline double http_response_elapsed(struct http_response *this) {
     double result = 0;
     curl_easy_getinfo(this->curl, CURLINFO_TOTAL_TIME, &result);
