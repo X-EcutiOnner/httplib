@@ -51,6 +51,10 @@ struct http_response *http_request(const char *method, const char *url, struct h
                 curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
                 curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
                 break;
+            case HTTP_AUTHTYPE_BEARER:
+                curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+                curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ((struct http_auth_bearer *)opts->auth)->token);
+                break;
             }
         }
     }

@@ -11,6 +11,7 @@ static inline const char *http_curl_error_text(void) {
 
 enum http_authtype {
     HTTP_AUTHTYPE_BASIC,
+    HTTP_AUTHTYPE_BEARER,
 };
 
 struct http_auth {
@@ -21,6 +22,11 @@ struct http_auth_basic {
     struct http_auth base;
     const char *username;
     const char *password;
+};
+
+struct http_auth_bearer {
+    struct http_auth base;
+    const char *token;
 };
 
 struct http_cert {

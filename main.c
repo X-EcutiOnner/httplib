@@ -4,8 +4,10 @@
 
 #define HTTPBIN_URL_COOKIES                         "https://httpbin.org/cookies"
 #define HTTPBIN_URL_BASIC_AUTH(user, password)      "https://httpbin.org/basic-auth/" user "/" password
+#define HTTPBIN_URL_BEARER                          "https://httpbin.org/bearer"
 
 #define HTTP_AUTH_BASIC_INIT(user, password)        {{HTTP_AUTHTYPE_BASIC}, (user), (password)}
+#define HTTP_AUTH_BEARER_INIT(token)                {{HTTP_AUTHTYPE_BEARER}, (token)}
 
 void response_print(struct http_response *resp) {
     if(!resp) {
@@ -42,7 +44,19 @@ void auth_basic(void) {
     http_response_free(resp);
 }
 
+void auth_bearer(void) {
+    struct http_auth_bearer auth = HTTP_AUTH_BEARER_INIT("token-abc123");
+    struct http_opts opts = {
+        .timeout_secs = 1,
+        .auth = (struct http_auth *)&auth,
+    };
+    struct http_response *resp = http_request("GET", HTTPBIN_URL_BEARER, &opts);
+    response_print(resp);
+    http_response_free(resp);
+}
+
 int main(void) {
     /* cookies(); */
-    auth_basic();
+    /* auth_basic(); */
+    auth_bearer();
 }
