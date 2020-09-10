@@ -48,6 +48,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
         if(opts->auth) {
             switch(opts->auth->type) {
             case HTTP_AUTHTYPE_BASIC:
+                curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
                 curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
                 curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
                 break;
