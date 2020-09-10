@@ -29,13 +29,23 @@ struct http_response *http_request(const char *method, const char *url, struct h
     struct http_response *result = malloc(sizeof *result);
     CURL *curl = curl_easy_init();
 
+    /* required arguments */
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
     curl_easy_setopt(curl, CURLOPT_URL, url);
 
+    /* setup callbacks */
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
 
+    /* default options */
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);  /*
+                                                          * TODO: reset content & headers?
+                                                          * Implement custom logic to follow redirects (with CURLINFO_REDIRECT_URL)?
+                                                          * Return linked list of http_response structs? (See Python requests API.)
+                                                          */
+
+    /* overrides */
     if(opts) {
         curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
         curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
