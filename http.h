@@ -23,7 +23,6 @@ struct http_write_buffer {
 
 struct http_response {
     CURLcode curl_code;
-    const char *curl_error;
     struct http_write_buffer headers;
     struct http_write_buffer content;
     char *url;
@@ -32,6 +31,10 @@ struct http_response {
 
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts);
 void http_response_free(struct http_response *this);
+
+static inline const char *http_response_curl_error(struct http_response *this) {
+    return curl_easy_strerror(this->curl_code);
+}
 
 static inline size_t http_response_headers_length(struct http_response *this) {
     return this->headers.size;

@@ -13,6 +13,6 @@ int main(void) {
     printf("URL: %s\n", resp->url);
     printf("Status Code: %d\n", resp->status_code);
     printf("Code: %d\n", resp->curl_code);
-    printf("Error: %s\n", resp->curl_error);
+    printf("Error: %s\n", http_response_curl_error(resp));
     http_response_free(resp);
 }
