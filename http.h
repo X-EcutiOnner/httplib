@@ -27,6 +27,7 @@ struct http_response {
     struct http_write_buffer headers;
     struct http_write_buffer content;
     char *url;
+    int status_code;
 };
 
 #define HTTP_RESPONSE_HEADERS_LENGTH(this)  ((this)->headers.size)

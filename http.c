@@ -52,6 +52,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
     result->curl_error = curl_easy_strerror(result->curl_code);
 
     curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &result->url);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &result->status_code);
 
     curl_easy_cleanup(curl);
     return result;

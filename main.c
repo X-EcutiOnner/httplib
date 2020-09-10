@@ -11,6 +11,7 @@ int main(void) {
     printf("CONTENT (%lu):\n%s\n\n", HTTP_RESPONSE_CONTENT_LENGTH(resp), HTTP_RESPONSE_CONTENT(resp));
     printf("HEADERS (%lu):\n%s\n\n", HTTP_RESPONSE_HEADERS_LENGTH(resp),HTTP_RESPONSE_HEADERS(resp));
     printf("URL: %s\n", resp->url);
+    printf("Status Code: %d\n", resp->status_code);
     printf("Code: %d\n", resp->curl_code);
     printf("Error: %s\n", resp->curl_error);
     http_response_free(resp);
