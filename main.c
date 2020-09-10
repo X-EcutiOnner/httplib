@@ -6,8 +6,6 @@
 #define HTTPBIN_URL_BASIC_AUTH(user, password)      "https://httpbin.org/basic-auth/" user "/" password
 #define HTTPBIN_URL_BEARER                          "https://httpbin.org/bearer"
 
-#define HTTP_AUTH_BASIC_INIT(user, password)        {{HTTP_AUTHTYPE_BASIC}, (user), (password)}
-#define HTTP_AUTH_BEARER_INIT(token)                {{HTTP_AUTHTYPE_BEARER}, (token)}
 
 void response_print(struct http_response *resp) {
     if(!resp) {
