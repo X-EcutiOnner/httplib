@@ -16,5 +16,6 @@ int main(void) {
     printf("HEADERS (%lu):\n%s\n\n", http_response_headers_length(resp), http_response_headers(resp));
     printf("URL: %s\n", http_response_url(resp));
     printf("Status Code: %d\n", http_response_status_code(resp));
+    printf("Elapsed Seconds: %f\n", http_response_elapsed(resp));
     http_response_free(resp);
 }

@@ -64,4 +64,10 @@ static inline int http_response_status_code(struct http_response *this) {
     return result;
 }
 
+static inline double http_response_elapsed(struct http_response *this) {
+    double result;
+    curl_easy_getinfo(this->curl, CURLINFO_TOTAL_TIME, &result);
+    return result;
+}
+
 #endif
