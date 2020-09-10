@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 
 struct http_opts {
+    char *cookies;
     char *proxy;
 };
 
