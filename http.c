@@ -20,7 +20,6 @@ static size_t write_callback(void *contents, size_t size, size_t count, void *_b
     return new_size;
 }
 
-
 struct http_response *_http_curl_perform(CURL *curl) {
     struct http_response *result = malloc(sizeof *result);
 
@@ -35,6 +34,10 @@ struct http_response *_http_curl_perform(CURL *curl) {
     CURLcode curl_code = curl_easy_perform(curl);
     if(curl_code != CURLE_OK)
         goto fail;
+
+    result->next = http_request_follow_redirect(result);
+    result->redirect_count = 0;
+
     return result;
 
 fail:
@@ -42,6 +45,24 @@ fail:
     curl_easy_cleanup(curl);
     free(result);
     return NULL;
+}
+
+struct http_response *http_request_follow_redirect(struct http_response *resp) {
+    if(!resp)
+        return NULL;
+    if(resp->redirect_count >= HTTP_MAX_REDIRECTS)
+        return NULL;
+    const char *url = http_response_redirect_url(resp);
+    if(!url)
+        return NULL;
+
+    CURL *newcurl = curl_easy_duphandle(resp->curl);
+    curl_easy_setopt(newcurl, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_easy_setopt(newcurl, CURLOPT_URL, url);
+
+    struct http_response *result = _http_curl_perform(newcurl);
+    result->redirect_count = resp->redirect_count + 1;
+    return result;
 }
 
 void _http_curl_setopts(CURL *curl, struct http_opts *opts) {
@@ -76,20 +97,9 @@ struct http_response *http_request(const char *method, const char *url, struct h
         return NULL;
     if(!url)
         return NULL;
-
     CURL *curl = curl_easy_init();
-
-    /* required arguments */
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
     curl_easy_setopt(curl, CURLOPT_URL, url);
-
-    /* default options */
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);  /*
-                                                          * TODO: reset content & headers?
-                                                          * Implement custom logic to follow redirects (with CURLINFO_REDIRECT_URL)?
-                                                          * Return linked list of http_response structs? (See Python requests API.)
-                                                          */
-
     _http_curl_setopts(curl, opts);
     return _http_curl_perform(curl);
 }
@@ -100,5 +110,7 @@ void http_response_free(struct http_response *this) {
         free(this->headers.data);
     if(this->content.data)
         free(this->content.data);
+    if(this->next)
+        http_response_free(this->next);
     free(this);
 }

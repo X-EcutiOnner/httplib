@@ -19,6 +19,12 @@ void response_print(struct http_response *resp) {
     printf("URL: %s\n", http_response_url(resp));
     printf("Status Code: %d\n", http_response_status_code(resp));
     printf("Elapsed Seconds: %f\n", http_response_elapsed(resp));
+    printf("Redirect Count: %d\n", http_response_redirect_count(resp));
+
+    if(resp->next) {
+        printf("***REDIRECT! (URL: %s)\n", http_response_redirect_url(resp));
+        response_print(resp->next);
+    }
 }
 
 void basic_usage(void) {

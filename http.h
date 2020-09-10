@@ -1,6 +1,8 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#define HTTP_MAX_REDIRECTS  (10)
+
 #include <curl/curl.h>
 
 extern CURLcode http_curl_error_code;
@@ -57,8 +59,11 @@ struct http_response {
     CURL *curl;
     struct http_write_buffer headers;
     struct http_write_buffer content;
+    struct http_response *next;
+    int redirect_count;
 };
 
+struct http_response *http_request_follow_redirect(struct http_response *resp);
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts);
 void http_response_free(struct http_response *this);
 
@@ -76,6 +81,10 @@ static inline size_t http_response_content_length(struct http_response *this) {
 
 static inline const char *http_response_content(struct http_response *this) {
     return this->content.data;
+}
+
+static inline int http_response_redirect_count(struct http_response *this) {
+    return this->redirect_count;
 }
 
 static inline const char *http_response_url(struct http_response *this) {
