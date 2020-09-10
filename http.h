@@ -26,6 +26,7 @@ struct http_response {
     const char *curl_error;
     struct http_write_buffer headers;
     struct http_write_buffer content;
+    char *url;
 };
 
 #define HTTP_RESPONSE_HEADERS_LENGTH(this)  ((this)->headers.size)
