@@ -3,6 +3,12 @@
 
 #include <curl/curl.h>
 
+extern CURLcode http_curl_error_code;
+
+static inline const char *http_curl_error_text(void) {
+    return curl_easy_strerror(http_curl_error_code);
+}
+
 struct http_cert {
     char *cert;
     char *key;
@@ -23,17 +29,12 @@ struct http_write_buffer {
 
 struct http_response {
     CURL *curl;
-    CURLcode curl_code;
     struct http_write_buffer headers;
     struct http_write_buffer content;
 };
 
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts);
 void http_response_free(struct http_response *this);
-
-static inline const char *http_response_curl_error(struct http_response *this) {
-    return curl_easy_strerror(this->curl_code);
-}
 
 static inline size_t http_response_headers_length(struct http_response *this) {
     return this->headers.size;

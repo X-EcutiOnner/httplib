@@ -3,6 +3,8 @@
 #include <string.h>
 #include "http.h"
 
+CURLcode http_curl_error_code = CURLE_OK;
+
 #define WRITE_BUFFER_INIT   ((struct http_write_buffer){0})
 
 static size_t write_callback(void *contents, size_t size, size_t count, void *_buffer) {
@@ -47,11 +49,18 @@ struct http_response *http_request(const char *method, const char *url, struct h
 
     result->headers = WRITE_BUFFER_INIT;
     result->content = WRITE_BUFFER_INIT;
-
     result->curl = curl;
-    result->curl_code = curl_easy_perform(curl);
 
+    CURLcode curl_code = curl_easy_perform(curl);
+    if(curl_code != CURLE_OK)
+        goto fail;
     return result;
+
+fail:
+    http_curl_error_code = curl_code;
+    curl_easy_cleanup(curl);
+    free(result);
+    return NULL;
 }
 
 void http_response_free(struct http_response *this) {
