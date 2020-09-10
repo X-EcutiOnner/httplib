@@ -45,6 +45,14 @@ struct http_response *http_request(const char *method, const char *url, struct h
             curl_easy_setopt(curl, CURLOPT_KEYPASSWD, opts->cert->password);
         }
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
+        if(opts->auth) {
+            switch(opts->auth->type) {
+            case HTTP_AUTHTYPE_BASIC:
+                curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
+                curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
+                break;
+            }
+        }
     }
 
     result->headers = WRITE_BUFFER_INIT;

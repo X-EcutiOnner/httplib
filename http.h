@@ -9,6 +9,20 @@ static inline const char *http_curl_error_text(void) {
     return curl_easy_strerror(http_curl_error_code);
 }
 
+enum http_authtype {
+    HTTP_AUTHTYPE_BASIC,
+};
+
+struct http_auth {
+    enum http_authtype type;
+};
+
+struct http_auth_basic {
+    struct http_auth base;
+    const char *username;
+    const char *password;
+};
+
 struct http_cert {
     char *cert;
     char *key;
@@ -20,6 +34,7 @@ struct http_opts {
     char *proxy;
     struct http_cert *cert;
     int timeout_secs;
+    struct http_auth *auth;
 };
 
 struct http_write_buffer {
