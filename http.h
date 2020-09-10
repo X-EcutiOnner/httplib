@@ -32,6 +32,8 @@ struct http_auth_bearer {
 #define HTTP_AUTH_BASIC_INIT(user, password)        {{HTTP_AUTHTYPE_BASIC}, (user), (password)}
 #define HTTP_AUTH_BEARER_INIT(token)                {{HTTP_AUTHTYPE_BEARER}, (token)}
 
+#define HTTP_AUTH_CAST(o)   ((struct http_auth *)(o))
+
 struct http_cert {
     char *cert;
     char *key;

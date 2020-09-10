@@ -35,7 +35,7 @@ void auth_basic(void) {
     struct http_auth_basic auth = HTTP_AUTH_BASIC_INIT("me", "p4$$w0rd");
     struct http_opts opts = {
         .timeout_secs = 1,
-        .auth = (struct http_auth *)&auth,
+        .auth = HTTP_AUTH_CAST(&auth),
     };
     struct http_response *resp = http_request("GET", HTTPBIN_URL_BASIC_AUTH("me", "p4$$w0rd"), &opts);
     response_print(resp);
@@ -46,7 +46,7 @@ void auth_bearer(void) {
     struct http_auth_bearer auth = HTTP_AUTH_BEARER_INIT("token-abc123");
     struct http_opts opts = {
         .timeout_secs = 1,
-        .auth = (struct http_auth *)&auth,
+        .auth = HTTP_AUTH_CAST(&auth),
     };
     struct http_response *resp = http_request("GET", HTTPBIN_URL_BEARER, &opts);
     response_print(resp);
