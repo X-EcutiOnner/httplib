@@ -30,9 +30,6 @@ struct http_response {
     int status_code;
 };
 
-#define HTTP_RESPONSE_CONTENT_LENGTH(this)  ((this)->content.size)
-#define HTTP_RESPONSE_CONTENT(this)         ((this)->content.data)
-
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts);
 void http_response_free(struct http_response *this);
 
@@ -42,6 +39,14 @@ static inline size_t http_response_headers_length(struct http_response *this) {
 
 static inline const char *http_response_headers(struct http_response *this) {
     return this->headers.data;
+}
+
+static inline size_t http_response_content_length(struct http_response *this) {
+    return this->content.size;
+}
+
+static inline const char *http_response_content(struct http_response *this) {
+    return this->content.data;
 }
 
 #endif

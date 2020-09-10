@@ -8,7 +8,7 @@ int main(void) {
         .timeout_secs = 1,
     };
     struct http_response *resp = http_request("GET", "https://httpbin.org/cookies", &opts);
-    printf("CONTENT (%lu):\n%s\n\n", HTTP_RESPONSE_CONTENT_LENGTH(resp), HTTP_RESPONSE_CONTENT(resp));
+    printf("CONTENT (%lu):\n%s\n\n", http_response_content_length(resp), http_response_content(resp));
     printf("HEADERS (%lu):\n%s\n\n", http_response_headers_length(resp), http_response_headers(resp));
     printf("URL: %s\n", resp->url);
     printf("Status Code: %d\n", resp->status_code);
