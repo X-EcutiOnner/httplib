@@ -5,6 +5,7 @@
 int main(void) {
     struct http_opts opts = {
         .cookies = "key1=value1;key2=value2",
+        .timeout_secs = 1,
     };
     struct http_response *resp = http_request("GET", "https://httpbin.org/cookies", &opts);
     printf("CONTENT (%lu):\n%s\n\n", HTTP_RESPONSE_CONTENT_LENGTH(resp), HTTP_RESPONSE_CONTENT(resp));

@@ -13,6 +13,7 @@ struct http_opts {
     char *cookies;
     char *proxy;
     struct http_cert *cert;
+    int timeout_secs;
 };
 
 struct http_write_buffer {

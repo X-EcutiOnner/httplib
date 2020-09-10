@@ -42,6 +42,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
             curl_easy_setopt(curl, CURLOPT_SSLKEY, opts->cert->key);
             curl_easy_setopt(curl, CURLOPT_KEYPASSWD, opts->cert->password);
         }
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
     }
 
     result->headers = WRITE_BUFFER_INIT;
