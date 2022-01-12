@@ -21,7 +21,7 @@ static size_t write_callback(void *contents, size_t size, size_t count, void *_b
     return new_size;
 }
 
-struct http_response *_http_curl_perform(CURL *curl)
+static struct http_response *_http_curl_perform(CURL *curl)
 {
     struct http_response *result = malloc(sizeof *result);
 
@@ -68,7 +68,7 @@ struct http_response *http_request_follow_redirect(struct http_response *resp)
     return result;
 }
 
-void _http_curl_setopts(CURL *curl, struct http_opts *opts)
+static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
 {
     if (!opts)
         return;
