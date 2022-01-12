@@ -4,7 +4,6 @@
 
 int main(void) {
     struct http_opts opts = {
-        .timeout_secs = 1,
         .auth = HTTP_AUTH_BEARER("token-abc123"),
     };
     struct http_response *resp = http_request("GET", "https://httpbin.org/bearer", &opts);

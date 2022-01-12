@@ -5,7 +5,6 @@
 
 int main(void) {
     struct http_opts opts = {
-        .timeout_secs = 1,
         .auth = HTTP_AUTH_BASIC("me", "p4$$w0rd"),
     };
     struct http_response *resp = http_request("GET", HTTPBIN_URL_BASIC_AUTH("me", "p4$$w0rd"), &opts);
