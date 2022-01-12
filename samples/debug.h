@@ -2,7 +2,7 @@
 #include "http.h"
 
 
-static void response_print(struct http_response *resp) {
+static void debug_response_print(struct http_response *resp) {
     if(!resp) {
         printf("Error Code: %d\n", http_curl_error_code);
         printf("Error Text: %s\n", http_curl_error_text());
@@ -18,6 +18,6 @@ static void response_print(struct http_response *resp) {
 
     if(resp->next) {
         printf("***REDIRECT! (URL: %s)\n", http_response_redirect_url(resp));
-        response_print(resp->next);
+        debug_response_print(resp->next);
     }
 }

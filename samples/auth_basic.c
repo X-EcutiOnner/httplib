@@ -9,6 +9,6 @@ int main(void) {
         .auth = HTTP_AUTH_BASIC("me", "p4$$w0rd"),
     };
     struct http_response *resp = http_request("GET", HTTPBIN_URL_BASIC_AUTH("me", "p4$$w0rd"), &opts);
-    response_print(resp);
+    debug_response_print(resp);
     http_response_free(resp);
 }

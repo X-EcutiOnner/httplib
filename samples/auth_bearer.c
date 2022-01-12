@@ -8,6 +8,6 @@ int main(void) {
         .auth = HTTP_AUTH_BEARER("token-abc123"),
     };
     struct http_response *resp = http_request("GET", "https://httpbin.org/bearer", &opts);
-    response_print(resp);
+    debug_response_print(resp);
     http_response_free(resp);
 }
