@@ -21,7 +21,7 @@ static size_t write_callback(void *contents, size_t size, size_t count, void *_b
     return new_size;
 }
 
-static struct http_response *_http_curl_perform(CURL *curl)
+static struct http_response *_http_curl_perform(CURL *curl, int redirect_count)
 {
     struct http_response *result = malloc(sizeof *result);
 
@@ -29,7 +29,7 @@ static struct http_response *_http_curl_perform(CURL *curl)
     result->headers = WRITE_BUFFER_INIT;
     result->content = WRITE_BUFFER_INIT;
     result->next = NULL;
-    result->redirect_count = 0;
+    result->redirect_count = redirect_count;
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
@@ -65,9 +65,7 @@ struct http_response *http_request_follow_redirect(struct http_response *resp)
     curl_easy_setopt(newcurl, CURLOPT_CUSTOMREQUEST, "GET");
     curl_easy_setopt(newcurl, CURLOPT_URL, url);
 
-    struct http_response *result = _http_curl_perform(newcurl);
-    result->redirect_count = resp->redirect_count + 1;
-    return result;
+    return _http_curl_perform(newcurl, resp->redirect_count + 1);
 }
 
 static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
@@ -113,7 +111,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
 
     _http_curl_setopts(curl, opts);
 
-    return _http_curl_perform(curl);
+    return _http_curl_perform(curl, 0);
 }
 
 void http_response_free(struct http_response *this)

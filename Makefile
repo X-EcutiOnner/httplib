@@ -4,7 +4,7 @@ CFLAGS=-Wall -Wextra -Wpedantic -Iinclude
 
 all: clean samples
 
-samples: sample_basic_usage sample_cookies sample_auth_basic sample_auth_bearer
+samples: sample_basic_usage sample_cookies sample_auth_basic sample_auth_bearer sample_redirects
 
 sample_%: $(SOURCES) samples/%.c
 	mkdir -p $(BIN)
