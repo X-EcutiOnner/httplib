@@ -3,7 +3,8 @@
 
 #define HTTPBIN_URL_BASIC_AUTH(user, password)      "https://httpbin.org/basic-auth/" user "/" password
 
-int main(void) {
+int main(void)
+{
     struct http_opts opts = {
         .auth = HTTP_AUTH_BASIC("me", "p4$$w0rd"),
     };

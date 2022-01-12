@@ -1,8 +1,8 @@
 #include "http.h"
 #include "debug.h"
 
-
-int main(void) {
+int main(void)
+{
     struct http_opts opts = {
         .cookies = "key1=value1;key2=value2",
     };
