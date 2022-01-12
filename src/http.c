@@ -37,8 +37,8 @@ static struct http_response *_http_curl_perform(CURL *curl)
     if (curl_code != CURLE_OK)
         goto fail;
 
-    result->next = http_request_follow_redirect(result);
     result->redirect_count = 0;
+    result->next = http_request_follow_redirect(result);
 
     return result;
 
