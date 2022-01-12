@@ -12,7 +12,7 @@ static size_t write_callback(void *contents, size_t size, size_t count, void *_b
     struct http_write_buffer *buffer = (struct http_write_buffer *)_buffer;
     size_t new_size = size * count;
     char *new_memory = realloc(buffer->data, buffer->size + new_size + 1);
-    if(new_memory == NULL)
+    if (new_memory == NULL)
         return 0;
     buffer->data = new_memory;
     memcpy(&buffer->data[buffer->size], contents, new_size);
@@ -34,7 +34,7 @@ struct http_response *_http_curl_perform(CURL *curl)
     result->curl = curl;
 
     CURLcode curl_code = curl_easy_perform(curl);
-    if(curl_code != CURLE_OK)
+    if (curl_code != CURLE_OK)
         goto fail;
 
     result->next = http_request_follow_redirect(result);
@@ -51,12 +51,12 @@ fail:
 
 struct http_response *http_request_follow_redirect(struct http_response *resp)
 {
-    if(!resp)
+    if (!resp)
         return NULL;
-    if(resp->redirect_count >= HTTP_MAX_REDIRECTS)
+    if (resp->redirect_count >= HTTP_MAX_REDIRECTS)
         return NULL;
     const char *url = http_response_redirect_url(resp);
-    if(!url)
+    if (!url)
         return NULL;
 
     CURL *newcurl = curl_easy_duphandle(resp->curl);
@@ -70,14 +70,14 @@ struct http_response *http_request_follow_redirect(struct http_response *resp)
 
 void _http_curl_setopts(CURL *curl, struct http_opts *opts)
 {
-    if(!opts)
+    if (!opts)
         return;
 
     curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
     curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
 
-    if(opts->auth) {
+    if (opts->auth) {
         switch(opts->auth->type) {
         case HTTP_AUTHTYPE_BASIC:
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -99,9 +99,9 @@ void _http_curl_setopts(CURL *curl, struct http_opts *opts)
 
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts)
 {
-    if(!method)
+    if (!method)
         return NULL;
-    if(!url)
+    if (!url)
         return NULL;
 
     CURL *curl = curl_easy_init();
@@ -117,11 +117,11 @@ struct http_response *http_request(const char *method, const char *url, struct h
 void http_response_free(struct http_response *this)
 {
     curl_easy_cleanup(this->curl);
-    if(this->headers.data)
+    if (this->headers.data)
         free(this->headers.data);
-    if(this->content.data)
+    if (this->content.data)
         free(this->content.data);
-    if(this->next)
+    if (this->next)
         http_response_free(this->next);
     free(this);
 }

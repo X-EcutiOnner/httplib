@@ -3,7 +3,7 @@
 
 static void debug_response_print(struct http_response *resp)
 {
-    if(!resp) {
+    if (!resp) {
         printf("Error Code: %d\n", http_curl_error_code);
         printf("Error Text: %s\n", http_curl_error_text());
         return;
@@ -16,7 +16,7 @@ static void debug_response_print(struct http_response *resp)
     printf("Elapsed Seconds: %f\n", http_response_elapsed(resp));
     printf("Redirect Count: %d\n", http_response_redirect_count(resp));
 
-    if(resp->next) {
+    if (resp->next) {
         printf("***REDIRECT! (URL: %s)\n", http_response_redirect_url(resp));
         debug_response_print(resp->next);
     }
