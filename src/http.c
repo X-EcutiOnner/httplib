@@ -116,6 +116,8 @@ struct http_response *http_request(const char *method, const char *url, struct h
 
 void http_response_free(struct http_response *this)
 {
+    if (!this)
+        return;
     curl_easy_cleanup(this->curl);
     if (this->headers.data)
         free(this->headers.data);
