@@ -1,14 +1,15 @@
 BIN=bin
-P=main
 SOURCES=src/*.c
 CFLAGS=-Wall -Wextra -Wpedantic -Iinclude
 
-all: clean $P
+all: clean samples
 
-%: $(SOURCES) %.c
+samples: sample_basic_usage sample_cookies sample_auth_basic sample_auth_bearer
+
+sample_%: $(SOURCES) samples/%.c
 	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/$@ $? -lcurl
+	$(CC) $(CFLAGS) -o $(BIN)/$* $? -lcurl
 
 .PHONY: clean
 clean:
-	-rm $(BIN)/$P
+	-rm -r $(BIN)
