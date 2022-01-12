@@ -39,11 +39,12 @@ struct http_auth_x509 {
     char *password;
 };
 
-#define HTTP_AUTH_BASIC_INIT(user, password)        {{HTTP_AUTHTYPE_BASIC}, (user), (password)}
-#define HTTP_AUTH_BEARER_INIT(token)                {{HTTP_AUTHTYPE_BEARER}, (token)}
-#define HTTP_AUTH_X509_INIT(cert, key, password)    {{HTTP_AUTHTYPE_X509}, (cert), (key), (password)}
-
-#define HTTP_AUTH_CAST(o)   ((struct http_auth *)(o))
+#define HTTP_AUTH_BASIC(user, password)        \
+    (struct http_auth *)&(struct http_auth_basic){{HTTP_AUTHTYPE_BASIC}, (user), (password)}
+#define HTTP_AUTH_BEARER(token)                \
+    (struct http_auth *)&(struct http_auth_bearer){{HTTP_AUTHTYPE_BEARER}, (token)}
+#define HTTP_AUTH_X509(cert, key, password)    \
+    (struct http_auth *)&(struct http_auth_x509){{HTTP_AUTHTYPE_X509}, (cert), (key), (password)}
 
 struct http_opts {
     char *cookies;
