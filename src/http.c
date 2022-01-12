@@ -5,7 +5,7 @@
 
 CURLcode http_curl_error_code = CURLE_OK;
 
-#define WRITE_BUFFER_INIT   ((struct http_write_buffer){0})
+#define WRITE_BUFFER_INIT   ((struct http_write_buffer){.size=0, .data=NULL})
 
 static size_t write_callback(void *contents, size_t size, size_t count, void *_buffer)
 {
@@ -25,27 +25,27 @@ static struct http_response *_http_curl_perform(CURL *curl)
 {
     struct http_response *result = malloc(sizeof *result);
 
+    result->curl = curl;
+    result->headers = WRITE_BUFFER_INIT;
+    result->content = WRITE_BUFFER_INIT;
+    result->next = NULL;
+    result->redirect_count = 0;
+
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
-
-    result->headers = WRITE_BUFFER_INIT;
-    result->content = WRITE_BUFFER_INIT;
-    result->curl = curl;
 
     CURLcode curl_code = curl_easy_perform(curl);
     if (curl_code != CURLE_OK)
         goto fail;
 
-    result->redirect_count = 0;
     result->next = http_request_follow_redirect(result);
 
     return result;
 
 fail:
     http_curl_error_code = curl_code;
-    curl_easy_cleanup(curl);
-    free(result);
+    http_response_free(result);
     return NULL;
 }
 
