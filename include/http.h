@@ -13,6 +13,7 @@ static inline const char *http_curl_error_text(void) {
 
 enum http_authtype {
     HTTP_AUTHTYPE_BASIC,
+    HTTP_AUTHTYPE_DIGEST,
     HTTP_AUTHTYPE_BEARER,
     HTTP_AUTHTYPE_X509,
 };
@@ -22,6 +23,12 @@ struct http_auth {
 };
 
 struct http_auth_basic {
+    struct http_auth base;
+    const char *username;
+    const char *password;
+};
+
+struct http_auth_digest {
     struct http_auth base;
     const char *username;
     const char *password;
@@ -41,6 +48,8 @@ struct http_auth_x509 {
 
 #define HTTP_AUTH_BASIC(user, password)        \
     (struct http_auth *)&(struct http_auth_basic){{HTTP_AUTHTYPE_BASIC}, (user), (password)}
+#define HTTP_AUTH_DIGEST(user, password)        \
+    (struct http_auth *)&(struct http_auth_digest){{HTTP_AUTHTYPE_DIGEST}, (user), (password)}
 #define HTTP_AUTH_BEARER(token)                \
     (struct http_auth *)&(struct http_auth_bearer){{HTTP_AUTHTYPE_BEARER}, (token)}
 #define HTTP_AUTH_X509(cert, key, password)    \

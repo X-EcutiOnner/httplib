@@ -34,8 +34,6 @@ static struct http_response *_http_curl_perform(CURL *curl, int redirect_count)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
-    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L);
 
     CURLcode curl_code = curl_easy_perform(curl);
     if (curl_code != CURLE_OK)
@@ -83,6 +81,11 @@ static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_basic *)opts->auth)->username);
             curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_basic *)opts->auth)->password);
+            break;
+        case HTTP_AUTHTYPE_DIGEST:
+            curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+            curl_easy_setopt(curl, CURLOPT_USERNAME, ((struct http_auth_digest *)opts->auth)->username);
+            curl_easy_setopt(curl, CURLOPT_PASSWORD, ((struct http_auth_digest *)opts->auth)->password);
             break;
         case HTTP_AUTHTYPE_BEARER:
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
