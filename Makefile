@@ -1,12 +1,12 @@
 P=main
-OBJECTS=http.o main.o
-CFLAGS=-Wall -Wextra -pedantic
+SOURCES=src/*.c
+CFLAGS=-Wall -Wextra -Wpedantic -Iinclude
 
+all: clean $P
 
-$P: $(OBJECTS)
-	$(CC) -o $P $(OBJECTS) -lcurl
-
+%: $(SOURCES) %.c
+	$(CC) $(CFLAGS) -o $@ $? -lcurl
 
 .PHONY: clean
 clean:
-	rm $(OBJECTS) $P
+	-rm $P
