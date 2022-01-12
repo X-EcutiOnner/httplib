@@ -34,6 +34,8 @@ static struct http_response *_http_curl_perform(CURL *curl)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &result->headers);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result->content);
+    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L);
 
     CURLcode curl_code = curl_easy_perform(curl);
     if (curl_code != CURLE_OK)
