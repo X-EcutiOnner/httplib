@@ -74,6 +74,8 @@ static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
     curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
     curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
+    if (opts->data)
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, opts->data);
 
     if (opts->auth) {
         switch(opts->auth->type) {
@@ -109,10 +111,9 @@ struct http_response *http_request(const char *method, const char *url, struct h
 
     CURL *curl = curl_easy_init();
 
+    _http_curl_setopts(curl, opts);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
     curl_easy_setopt(curl, CURLOPT_URL, url);
-
-    _http_curl_setopts(curl, opts);
 
     return _http_curl_perform(curl, 0);
 }

@@ -58,6 +58,7 @@ struct http_auth_x509 {
 struct http_opts {
     char *cookies;
     char *proxy;
+    char *data;     /* POST body */
     int timeout_secs;
     struct http_auth *auth;
 };
