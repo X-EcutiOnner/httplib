@@ -66,6 +66,22 @@ struct http_response *http_request_follow_redirect(struct http_response *resp)
     return _http_curl_perform(newcurl, resp->redirect_count + 1);
 }
 
+static void _http_curldata_append_header(CURL *curl, const char *header)
+{
+    struct curl_slist *headers = NULL;
+    curl_easy_getinfo(curl, CURLINFO_PRIVATE, &headers);
+    headers = curl_slist_append(headers, header);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_PRIVATE, headers);
+}
+
+static void _http_curldata_free_headers(CURL *curl)
+{
+    struct curl_slist *headers = NULL;
+    curl_easy_getinfo(curl, CURLINFO_PRIVATE, headers);
+    curl_slist_free_all(headers);
+}
+
 static CURL *_http_curldata_init(const char *method, const char *url, struct http_opts *opts)
 {
     CURL *curl = curl_easy_init();
@@ -78,6 +94,10 @@ static CURL *_http_curldata_init(const char *method, const char *url, struct htt
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, opts->timeout_secs);
     if (opts->data)
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, opts->data);
+    if (opts->json) {
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, opts->json);
+        _http_curldata_append_header(curl, "Content-Type: application/json");
+    }
 
     if (opts->auth) {
         switch(opts->auth->type) {
@@ -124,6 +144,7 @@ void http_response_free(struct http_response *this)
 {
     if (!this)
         return;
+    _http_curldata_free_headers(this->curl);
     curl_easy_cleanup(this->curl);
     if (this->headers.data)
         free(this->headers.data);

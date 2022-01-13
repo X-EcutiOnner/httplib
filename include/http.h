@@ -58,7 +58,8 @@ struct http_auth_x509 {
 struct http_opts {
     char *cookies;
     char *proxy;
-    char *data;     /* POST body */
+    char *data;     /* POST body (or PUT, PATCH, etc.) */
+    char *json;     /* implies Content-Type: application/json */
     int timeout_secs;
     struct http_auth *auth;
 };
