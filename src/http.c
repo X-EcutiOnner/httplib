@@ -66,10 +66,12 @@ struct http_response *http_request_follow_redirect(struct http_response *resp)
     return _http_curl_perform(newcurl, resp->redirect_count + 1);
 }
 
-static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
+static CURL *_http_curldata_init(const char *method, const char *url, struct http_opts *opts)
 {
+    CURL *curl = curl_easy_init();
+
     if (!opts)
-        return;
+        goto noopts;
 
     curl_easy_setopt(curl, CURLOPT_PROXY, opts->proxy);
     curl_easy_setopt(curl, CURLOPT_COOKIE, opts->cookies);
@@ -100,6 +102,11 @@ static void _http_curl_setopts(CURL *curl, struct http_opts *opts)
             break;
         }
     }
+
+noopts:
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    return curl;
 }
 
 struct http_response *http_request(const char *method, const char *url, struct http_opts *opts)
@@ -109,12 +116,7 @@ struct http_response *http_request(const char *method, const char *url, struct h
     if (!url)
         return NULL;
 
-    CURL *curl = curl_easy_init();
-
-    _http_curl_setopts(curl, opts);
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-
+    CURL *curl = _http_curldata_init(method, url, opts);
     return _http_curl_perform(curl, 0);
 }
 
