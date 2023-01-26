@@ -7,9 +7,23 @@ Simple usage:
 
 int main(void)
 {
+    /*
+     * Call the http_request() function to make an HTTP request.
+     * For the first argument, provide the HTTP method (e.g. GET, POST).
+     * For the second argument, provide the URL.
+     * For the third argument, provide any options needed to complete the request.
+     * (When no options are needed, the third argument may be NULL.)
+     *
+     * This function returns a newly allocated pointer to a `struct http_response`
+     * which may be used to access attributes of the server response.
+     *
+     * Always dispose of the response pointer with http_response_free().
+     */
+
     struct http_response *resp = http_request("GET", "http://google.com/", NULL);
 
-    ... do something with response ...
+    printf("HEADERS:\n%s\n\n", http_response_headers(resp));
+    printf("CONTENT:\n%s\n\n", http_response_content(resp));
 
     http_response_free(resp);
 }
